@@ -1,5 +1,9 @@
 # MCP Kali Server
 
+**See [yack branch](https://github.com/yack-security/MCP-Kali-Server/tree/yack) to see our fork**
+
+---
+
 **Kali MCP Server** is a lightweight API bridge that connects MCP Clients (e.g: Claude Desktop, [5ire](https://github.com/nanbingxyz/5ire)) to the API server which allows excuting commands on a Linux terminal.
 
 This allows the MCP to run terminal commands like `nmap`, `nxc` or any other tool, interact with web applications using tools like `curl`, `wget`, `gobuster`. 
