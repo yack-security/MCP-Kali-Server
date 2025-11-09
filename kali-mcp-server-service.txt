@@ -1,0 +1,18 @@
+[Unit]
+Description=Kali MCP Server
+After=network.target
+
+[Service]
+Type=simple
+User=your_username
+Group=your_username
+WorkingDirectory=/path/to/your/MCP-Kali-Server
+ExecStart=/path/to/python3 /path/to/your/MCP-Kali-Server/kali_server.py --port 5000 --ip 127.0.0.1
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kali-mcp-server
+
+[Install]
+WantedBy=multi-user.target

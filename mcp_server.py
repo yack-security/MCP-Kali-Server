@@ -10,8 +10,11 @@ import argparse
 import logging
 from typing import Dict, Any, Optional
 import requests
+from dotenv import load_dotenv
 
 from mcp.server.fastmcp import FastMCP
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -22,6 +25,7 @@ logger = logging.getLogger(__name__)
 # Default configuration
 DEFAULT_KALI_SERVER = "http://localhost:5000"  # change to your linux IP
 DEFAULT_REQUEST_TIMEOUT = 300  # 5 minutes default timeout for API requests
+DEFAULT_CF_ZT = os.environ.get("CF_ZT", "0").lower() in ("1", "true", "yes", "y")
 
 
 class KaliToolsClient:
@@ -37,6 +41,21 @@ class KaliToolsClient:
         """
         self.server_url = server_url.rstrip("/")
         self.timeout = timeout
+
+        # Build headers for Cloudflare Zero Trust if enabled
+        self.headers = {}
+        if DEFAULT_CF_ZT:
+            cf_client_id = os.environ.get("CF_CLIENT_ID", "")
+            cf_client_secret = os.environ.get("CF_CLIENT_SECRET", "")
+            if cf_client_id and cf_client_secret:
+                self.headers = {
+                    "CF-Access-Client-Id": cf_client_id,
+                    "CF-Access-Client-Secret": cf_client_secret,
+                }
+                logger.info("Cloudflare Zero Trust headers configured")
+            else:
+                logger.warning("CF_ZT is enabled but CF_CLIENT_ID or CF_CLIENT_SECRET is missing")
+
         logger.info(f"Initialized Kali Tools Client connecting to {server_url}")
 
     def safe_get(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -57,7 +76,7 @@ class KaliToolsClient:
 
         try:
             logger.debug(f"GET {url} with params: {params}")
-            response = requests.get(url, params=params, timeout=self.timeout)
+            response = requests.get(url, params=params, headers=self.headers, timeout=self.timeout)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -82,7 +101,7 @@ class KaliToolsClient:
 
         try:
             logger.debug(f"POST {url} with data: {json_data}")
-            response = requests.post(url, json=json_data, timeout=self.timeout)
+            response = requests.post(url, json=json_data, headers=self.headers, timeout=self.timeout)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
