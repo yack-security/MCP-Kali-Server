@@ -1,8 +1,46 @@
 # MCP Kali Server
 
+## Yack Fork
+
+- Added `requirements.txt` file.
+- Added `--ip` argument to the `kali_server.py` script to set the IP address of the server.
+- Added `env.txt` example file to set the environment variables for the server.
+- Added `kali-mcp-server-service.txt` example file to set the service for the MCP server.
+- Added Cloudflare Zero Trust support (Headers for service authentication).
+
+Environment variables:
+
+```bash
+cp env.txt .env
+# edit .env file to set the environment variables
+```
+
+Service file:
+
+```bash
+cp kali-mcp-server-service.txt /etc/systemd/system/kali-mcp-server.service
+# edit the service file to set the environment variables
+
+sudo systemctl daemon-reload
+sudo systemctl enable kali-mcp-server.service
+
+# enable the service to start on boot
+sudo systemctl enable kali-mcp-server.service
+```
+
+For Cloudflare Zero Trust, edit your .env file to set the environment variables for the Cloudflare Zero Trust. Make sure to set the `CF_ZT` to `1` and specify the `CF_CLIENT_ID` and `CF_CLIENT_SECRET`.
+
+```bash
+CF_ZT=1
+CF_CLIENT_ID=your_client_id
+CF_CLIENT_SECRET=your_client_secret
+```
+
+---
+
 **Kali MCP Server** is a lightweight API bridge that connects MCP Clients (e.g: Claude Desktop, [5ire](https://github.com/nanbingxyz/5ire)) to the API server which allows excuting commands on a Linux terminal.
 
-This allows the MCP to run terminal commands like `nmap`, `nxc` or any other tool, interact with web applications using tools like `curl`, `wget`, `gobuster`. 
+This allows the MCP to run terminal commands like `nmap`, `nxc` or any other tool, interact with web applications using tools like `curl`, `wget`, `gobuster`.
  And perform **AI-assisted penetration testing**, solving **CTF web challenge** in real time, helping in **solving machines from HTB or THM**.
 
 ## My Medium Article on This Tool
